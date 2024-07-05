@@ -27,6 +27,9 @@ jobs:
       - name: Save tag to file
         run: echo "${{ github.ref }}" > release-tag.txt
 
+      - name: Show contents of release-tag.txt
+        run: cat release-tag.txt
+
       - name: Upload tag artifact
         uses: actions/upload-artifact@v3
         with:

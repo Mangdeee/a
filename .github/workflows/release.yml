@@ -13,13 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Wait for artifact to be available
-        run: sleep 60s
+      - name: List artifacts available for download
+        run: ls -al
 
       - name: Download tag artifact
         uses: actions/download-artifact@v3
         with:
           name: release-tag
+
+      - name: Show contents of downloaded artifact
+        run: cat release-tag.txt
 
       - name: Read tag
         id: read_tag
