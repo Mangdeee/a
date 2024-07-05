@@ -20,7 +20,7 @@ jobs:
           body_path: CHANGELOG.md
           draft: false
           prerelease: false
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           generate_release_notes: true
           make_latest: true
 
