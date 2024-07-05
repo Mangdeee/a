@@ -18,10 +18,9 @@ jobs:
         run: ls -al
 
       - name: List  available for download
-        run: cd .git
-
-      - name: List artifacts  for download
-        run: ls -al
+        run: |
+          cd .git
+          ls -al
 
       # Step to download the tag artifact
       - name: Download tag artifact
