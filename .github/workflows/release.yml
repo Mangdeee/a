@@ -1,0 +1,28 @@
+name: Create Release
+
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download tag artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: release-tag
+
+      - name: Read tag
+        id: read_tag
+        run: |
+          TAG=$(cat release-tag.txt)
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Use tag
+        run: echo "Using tag ${{ env.TAG }}"

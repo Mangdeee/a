@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Check Docker version
+      command: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Display Docker version
+      debug:
+        msg: "Docker version: {{ docker_version.stdout }}"
+
+    - name: Ensure Docker service is running
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull the hello-world image
+      docker_image:
+        name: hello-world
+        source: pull
+
+    - name: Run hello-world container
+      docker_container:
+        name: hello_world
+        image: hello-world
+        state: started
+        auto_remove: yes

@@ -1,0 +1,1 @@
+Update workflow to update release note
