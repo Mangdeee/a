@@ -13,6 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Wait for artifact to be available
+        run: sleep 10s
+
       - name: Download tag artifact
         uses: actions/download-artifact@v3
         with:
