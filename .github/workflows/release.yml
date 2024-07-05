@@ -13,22 +13,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Step to list artifacts available for download (optional)
       - name: List artifacts available for download
         run: ls -al
 
+      # Step to download the tag artifact
       - name: Download tag artifact
         uses: actions/download-artifact@v3
         with:
           name: release-tag
 
+      # Step to show the contents of downloaded artifact (optional)
       - name: Show contents of downloaded artifact
         run: cat release-tag.txt
 
+      # Step to read the tag from the downloaded artifact
       - name: Read tag
         id: read_tag
         run: |
           TAG=$(cat release-tag.txt)
           echo "TAG=$TAG" >> $GITHUB_ENV
 
+      # Step to use the tag in further actions or scripts
       - name: Use tag
         run: echo "Using tag ${{ env.TAG }}"
