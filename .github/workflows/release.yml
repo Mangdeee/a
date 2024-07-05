@@ -17,6 +17,12 @@ jobs:
       - name: List artifacts available for download
         run: ls -al
 
+      - name: List  available for download
+        run: cd .git
+
+      - name: List artifacts  for download
+        run: ls -al
+
       # Step to download the tag artifact
       - name: Download tag artifact
         uses: actions/download-artifact@v3
