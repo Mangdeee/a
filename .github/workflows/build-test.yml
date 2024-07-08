@@ -4,7 +4,7 @@ name: Tag Trigger Workflow
 on:
   push:
     tags:
-      - "*"
+      - "v*.*"
 
 jobs:
   build:
@@ -18,9 +18,12 @@ jobs:
       - name: Run build
         run: echo "Running build for tag ${{ github.ref }}"
 
+      - name: Set output
+        id: vars
+        run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
+
       - name: Create release tag
         run: |
-          TAG_NAME=${{ github.ref }}
-          RELEASE_TAG=v${TAG_NAME#refs/tags/}
+          RELEASE_TAG=v${{ steps.vars.outputs.tag_name }}
           git tag $RELEASE_TAG
           git push origin $RELEASE_TAG

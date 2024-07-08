@@ -2,9 +2,10 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_run:
+    workflows: ["Tag Trigger Workflow"]
+    types:
+      - completed
 
 jobs:
   create_release:
@@ -14,15 +15,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Get latest tag
+        id: get_tag
+        run: echo "::set-output name=tag::$(git describe --tags $(git rev-list --tags --max-count=1))"
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          release_name: Release ${{ steps.get_tag.outputs.tag }}
           body: |
-            This is an automated release created for the tag ${{ github.ref }}.
+            This is an automated release created for the tag ${{ steps.get_tag.outputs.tag }}.
           draft: false
           prerelease: false
