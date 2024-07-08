@@ -21,9 +21,3 @@ jobs:
       - name: Set output
         id: vars
         run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
-
-      - name: Create release tag
-        run: |
-          RELEASE_TAG=v${{ steps.vars.outputs.tag_name }}
-          git tag $RELEASE_TAG
-          git push origin $RELEASE_TAG
