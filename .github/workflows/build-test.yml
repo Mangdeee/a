@@ -17,7 +17,3 @@ jobs:
       # Add your build or test steps here
       - name: Run build
         run: echo "Running build for tag ${{ github.ref }}"
-
-      - name: Set output
-        id: vars
-        run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
