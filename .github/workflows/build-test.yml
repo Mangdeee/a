@@ -1,41 +1,26 @@
-name: Build and Test
+# .github/workflows/tag-trigger.yml
+name: Tag Trigger Workflow
 
 on:
   push:
     tags:
-      - "v+[0-9]+.[0-9]+.[0-9]+"
+      - "*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Step to create a release (optional)
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Release ${{ github.ref }}
-          tag_name: ${{ github.ref }}
-          body_path: CHANGELOG.md
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GH_TOKEN }}
-          generate_release_notes: true
-          make_latest: true
+      # Add your build or test steps here
+      - name: Run build
+        run: echo "Running build for tag ${{ github.ref }}"
 
-      # Step to save the tag to a file
-      - name: Save tag to file
-        run: echo "${{ github.ref }}" > release-tag.txt
-
-      # Step to show the contents of release-tag.txt (optional)
-      - name: Show contents of release-tag.txt
-        run: cat release-tag.txt
-
-      # Step to upload the tag artifact
-      - name: Upload tag artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-tag
-          path: release-tag.txt
+      - name: Create release tag
+        run: |
+          TAG_NAME=${{ github.ref }}
+          RELEASE_TAG=v${TAG_NAME#refs/tags/}
+          git tag $RELEASE_TAG
+          git push origin $RELEASE_TAG
