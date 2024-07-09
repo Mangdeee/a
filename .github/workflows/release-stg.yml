@@ -32,12 +32,12 @@ jobs:
           RELEASE_BODY=$(cat CHANGELOG.md)
           echo "::set-output name=body::$RELEASE_BODY"
 
-      - name: Get latest release from GitHub
-        id: get_latest_release
+      - name: Get latest pre-release from GitHub
+        id: get_latest_pre_release
         run: |
-          LATEST_RELEASE_DATA=$(curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
-          LATEST_RELEASE_BODY=$(echo "$LATEST_RELEASE_DATA" | jq -r '.body')
-          echo "::set-output name=latest_body::$LATEST_RELEASE_BODY"
+          LATEST_PRE_RELEASE_DATA=$(curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" -s https://api.github.com/repos/${{ github.repository }}/releases | jq -r '[.[] | select(.prerelease == true)] | first')
+          LATEST_PRE_RELEASE_BODY=$(echo "$LATEST_PRE_RELEASE_DATA" | jq -r '.body')
+          echo "::set-output name=latest_body::$LATEST_PRE_RELEASE_BODY"
 
       - name: Check if CHANGELOG.md is updated
         id: check_changelog
