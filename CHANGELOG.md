@@ -1,1 +1,1 @@
-Update workflow to update release note v1.6
+Update workflow to update release note v1.7
