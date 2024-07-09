@@ -1,0 +1,19 @@
+# .github/workflows/tag-trigger.yml
+name: Tag Trigger Workflow Stg
+
+on:
+  push:
+    tags:
+      - "v*.*.*-rc.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Add your build or test steps here
+      - name: Run build
+        run: echo "Running build for tag ${{ github.ref }}"

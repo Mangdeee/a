@@ -1,0 +1,19 @@
+name: Deploy App Stg
+
+on:
+  workflow_run:
+    workflows: ["Create Release Stg"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Add your build or test steps here
+      - name: Run build
+        run: echo "Running deployment for tag ${{ github.ref }}"
