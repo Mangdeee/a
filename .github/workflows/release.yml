@@ -1,46 +1,3 @@
-# # .github/workflows/create-release.yml
-# name: Create Release
-
-# on:
-#   workflow_run:
-#     workflows: ["Tag Trigger Workflow"]
-#     types:
-#       - completed
-
-# jobs:
-#   create_release:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-#         with:
-#           fetch-depth: 0 # Fetch all history for all tags
-
-#       - name: Get the latest tag
-#         id: get_tag
-#         run: |
-#           TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "")
-#           if [ -z "$TAG" ]; then
-#             echo "No tags found"
-#             exit 1
-#           fi
-#           echo "::set-output name=tag::$TAG"
-
-#       - name: Create GitHub Release
-#         id: create_release
-#         uses: actions/create-release@v1
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-#         with:
-#           tag_name: ${{ steps.get_tag.outputs.tag }}
-#           release_name: Release ${{ steps.get_tag.outputs.tag }}
-#           body: |
-#             This is an automated release created for the tag ${{ steps.get_tag.outputs.tag }}.
-#           draft: false
-#           prerelease: false
-
-# .github/workflows/create-release.yml
 name: Create Release
 
 on:
@@ -51,6 +8,8 @@ on:
 
 jobs:
   create_release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     runs-on: ubuntu-latest
 
     steps:
