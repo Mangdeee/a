@@ -1,3 +1,45 @@
+# # .github/workflows/create-release.yml
+# name: Create Release
+
+# on:
+#   workflow_run:
+#     workflows: ["Tag Trigger Workflow"]
+#     types:
+#       - completed
+
+# jobs:
+#   create_release:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 0 # Fetch all history for all tags
+
+#       - name: Get the latest tag
+#         id: get_tag
+#         run: |
+#           TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "")
+#           if [ -z "$TAG" ]; then
+#             echo "No tags found"
+#             exit 1
+#           fi
+#           echo "::set-output name=tag::$TAG"
+
+#       - name: Create GitHub Release
+#         id: create_release
+#         uses: actions/create-release@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#         with:
+#           tag_name: ${{ steps.get_tag.outputs.tag }}
+#           release_name: Release ${{ steps.get_tag.outputs.tag }}
+#           body: |
+#             This is an automated release created for the tag ${{ steps.get_tag.outputs.tag }}.
+#           draft: false
+#           prerelease: false
+
 # .github/workflows/create-release.yml
 name: Create Release
 
@@ -27,6 +69,30 @@ jobs:
           fi
           echo "::set-output name=tag::$TAG"
 
+      - name: Read release body from CHANGELOG.md
+        id: get_release_body
+        run: |
+          RELEASE_BODY=$(cat CHANGELOG.md)
+          echo "::set-output name=body::$RELEASE_BODY"
+
+      - name: Get latest release from GitHub
+        id: get_latest_release
+        run: |
+          LATEST_RELEASE_DATA=$(curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          LATEST_RELEASE_BODY=$(echo "$LATEST_RELEASE_DATA" | jq -r '.body')
+          echo "::set-output name=latest_body::$LATEST_RELEASE_BODY"
+
+      - name: Check if CHANGELOG.md is updated
+        id: check_changelog
+        run: |
+          LATEST_RELEASE_BODY="${{ steps.get_latest_release.outputs.latest_body }}"
+          CHANGELOG_BODY="${{ steps.get_release_body.outputs.body }}"
+
+          if [ "$LATEST_RELEASE_BODY" == "$CHANGELOG_BODY" ]; then
+            echo "CHANGELOG.md has not been updated. Exiting."
+            exit 1
+          fi
+
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -35,7 +101,6 @@ jobs:
         with:
           tag_name: ${{ steps.get_tag.outputs.tag }}
           release_name: Release ${{ steps.get_tag.outputs.tag }}
-          body: |
-            This is an automated release created for the tag ${{ steps.get_tag.outputs.tag }}.
+          body: ${{ steps.get_release_body.outputs.body }}
           draft: false
           prerelease: false
