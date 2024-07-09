@@ -60,4 +60,4 @@ jobs:
           release_name: Release ${{ steps.get_tag.outputs.tag }}
           body: ${{ steps.get_release_body.outputs.body }}
           draft: false
-          prerelease: false
+          prerelease: true
